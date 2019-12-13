@@ -13,6 +13,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Product Entity.
  * 
@@ -44,8 +47,10 @@ public class Product {
 //    cascade = CascadeType.PERSIST,
     fetch = FetchType.LAZY
   )
+  @JsonIgnore
   private List<Review> reviews;
 
+  
   /* constructors */
   public Product() {
     super();
