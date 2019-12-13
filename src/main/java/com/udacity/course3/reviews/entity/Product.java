@@ -1,12 +1,15 @@
 package com.udacity.course3.reviews.entity;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -24,7 +27,7 @@ public class Product {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name="product_id")
-  private Long id;
+  private Integer id;
   
   @Column(name="name")
   @NotNull
@@ -36,6 +39,12 @@ public class Product {
   @Column(name = "created_time")
   private Timestamp createdTime;
   
+  @OneToMany(
+    mappedBy = "product", 
+//    cascade = CascadeType.PERSIST,
+    fetch = FetchType.LAZY
+  )
+  private List<Review> reviews;
 
   /* constructors */
   public Product() {
@@ -44,11 +53,11 @@ public class Product {
 
   
   /* methods */
-  public Long getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
@@ -74,6 +83,14 @@ public class Product {
 
   public void setCreatedTime(Timestamp createdTime) {
     this.createdTime = createdTime;
+  }
+
+  public List<Review> getReviews() {
+    return reviews;
+  }
+
+  public void setReviews(List<Review> reviews) {
+    this.reviews = reviews;
   }
 
 }
