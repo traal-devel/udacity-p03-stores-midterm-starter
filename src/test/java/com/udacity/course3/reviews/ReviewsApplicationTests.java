@@ -14,42 +14,55 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.udacity.course3.reviews.entity.Comment;
 import com.udacity.course3.reviews.entity.Product;
 import com.udacity.course3.reviews.entity.Review;
+import com.udacity.course3.reviews.repository.CommentRepository;
 import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
+import com.udacity.course3.reviews.service.CommentService;
 import com.udacity.course3.reviews.service.ProductService;
+import com.udacity.course3.reviews.service.ReviewService;
 import com.udacity.course3.reviews.util.DummyDataUtil;
 
+/**
+ * Reviews Application basic tests.
+ * 
+ * :INFO: Data JPA Test (h2 embedded database) are done in separate classes.
+ * This class here uses the mysql database.
+ * 
+ * @author traal-devel
+ */
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class ProductServiceTest {
+public class ReviewsApplicationTests {
 
   
   /* member variables */
   @Autowired 
-  private ProductRepository productRepository;
+  private ProductRepository           productRepository;
   
   @Autowired
-  private ReviewRepository  reviewRepository;
+  private ReviewRepository            reviewRepository;
   
   @Autowired
-  private PlatformTransactionManager transactionManager;
-
-  private TransactionTemplate transactionTemplate;
-
-  /* methods */
+  private CommentRepository           commentRepository;
   
-  private ProductService    productService;
+  @Autowired
+  private PlatformTransactionManager  transactionManager;
+
+  private TransactionTemplate         transactionTemplate;
+
+  private ProductService              productService;
+  private CommentService              commentService;
+  private ReviewService               reviewService;
+  
   
   /* constructors */
-  public ProductServiceTest() {
+  public ReviewsApplicationTests() {
     super();
   }
   
@@ -58,6 +71,10 @@ public class ProductServiceTest {
   @Before
   public void before() {
     this.productService = new ProductService(this.productRepository);
+    this.reviewService = new ReviewService(
+                                this.productRepository, this.reviewRepository);
+    this.commentService = new CommentService(
+                                this.reviewRepository, this.commentRepository);
     
     transactionTemplate = new TransactionTemplate(
                                   transactionManager, 
@@ -82,8 +99,9 @@ public class ProductServiceTest {
   @Test
   public void testNotNull() {
     assertNotNull(this.productRepository);
-    assertNotNull(this.productService);
     assertNotNull(this.reviewRepository);
+    assertNotNull(this.commentRepository);
+    assertNotNull(this.productService);
   }
   
   // :INFO: does not work without transaction. Otherwise getReviews() would be null. 
@@ -94,36 +112,21 @@ public class ProductServiceTest {
   // - https://stackoverflow.com/questions/28669280/spring-transaction-not-working-as-expected-in-junit-in-non-debug-mode
   @Test
   public void testProductSaveWithReviews() {
-    final Product productAdded =
-        transactionTemplate.execute(new TransactionCallback<Product>() {
-          @Override
-          public Product doInTransaction(TransactionStatus status) {
-            Product product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
-            return ProductServiceTest.this.productService.save(product);
-          }
-        });
-    assertNotNull(productAdded.getId());
+    Product product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
+    Product productDB = this.productService.save(product);
+   
+    assertNotNull(productDB);
+    assertNotNull(productDB.getId());
     
-    final Review reviewAdded =
-        transactionTemplate.execute(new TransactionCallback<Review>() {
-          @Override
-          public Review doInTransaction(TransactionStatus status) {
-            Review review = DummyDataUtil.generateDummyReview(1).get(0);
-            review.setProduct(productAdded);
-            
-            return ProductServiceTest.this.reviewRepository.save(review);
-          }
-        });
-    assertNotNull(reviewAdded.getReviewId());
+    Review review = DummyDataUtil.generateDummyReview(1).get(0);
+    review.setProduct(productDB);
+    Review reviewAdded =  ReviewsApplicationTests.this.reviewRepository.save(review);
+    
+    assertNotNull(reviewAdded.getId());
 
-    transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-      @Override
-      protected void doInTransactionWithoutResult(TransactionStatus status) {
-        Product productDB = ProductServiceTest.this.productRepository.findById(productAdded.getId()).get();
-        assertNotNull(productDB.getReviews());
-        assertTrue(productDB.getReviews().size() == 1);
-      }
-    });
+    productDB = ReviewsApplicationTests.this.productRepository.findById(productDB.getId()).get();
+    assertNotNull(productDB.getReviews());
+    assertTrue(productDB.getReviews().size() == 1);
     
   }
   
@@ -184,5 +187,47 @@ public class ProductServiceTest {
     assertEquals(productFindById.getId(), productDB.getId());
     
   }
-
+  
+  @Test
+  public void testAll() {
+    
+    Product productRet = transactionTemplate.execute((status) -> {
+      Product product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
+      Product productDB = this.productService.save(product);
+      
+      assertNotNull(productDB);
+      assertNotNull(productDB.getId());
+      
+      Review review = DummyDataUtil.generateDummyReview(1).get(0);
+      Review reviewDB = this.reviewService.addReview(productDB.getId(), review);
+      
+      assertNotNull(reviewDB);
+      assertNotNull(reviewDB.getId());
+      
+      Comment comment = DummyDataUtil.generateDummyComment("_1");
+      Comment commentDB = this.commentService.addComment(reviewDB.getId(), comment);
+      
+      assertNotNull(commentDB);
+      assertNotNull(commentDB.getId());
+      
+      assertEquals(commentDB.getReview().getId(), reviewDB.getId());
+      assertEquals(reviewDB.getProduct().getId(), productDB.getId());
+      
+      return productDB;
+    });
+    // transaction end, data is flushed. 
+      
+    // now we can read the new data out of the database.
+    transactionTemplate.execute((status) -> {
+      Product productDB = this.productService.findById(productRet.getId());
+      assertNotNull(productDB);
+      assertNotNull(productDB.getReviews());
+      
+      return null;
+    });
+    
+  }
+  
+  
+  
 }
