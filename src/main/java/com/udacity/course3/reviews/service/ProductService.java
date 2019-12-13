@@ -82,5 +82,9 @@ public class ProductService {
   public List<Product> list() {
     return this.productRepository.findAll();
   }
+  
+  public long count() {
+    return this.productRepository.count();
+  }
 
 }
