@@ -44,7 +44,6 @@ public class Product {
   
   @OneToMany(
     mappedBy = "product", 
-//    cascade = CascadeType.PERSIST,
     fetch = FetchType.LAZY
   )
   @JsonIgnore
