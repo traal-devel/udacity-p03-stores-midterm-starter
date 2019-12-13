@@ -38,31 +38,39 @@ public class ReviewsApplicationTests {
   
   /* member variables */
   @Autowired
-  private ProductService    productService;
+  private ProductService                  productService;
   
   @Autowired
-  private ProductRepository productRepository;
+  private ProductRepository               productRepository;
 
   @Autowired
-  private ReviewRepository  reviewRepository;
+  private ReviewRepository                reviewRepository;
   
   @Autowired
-  private PlatformTransactionManager transactionManager;
+  private DtoConverter                    dtoConverter;
+  
+  @Autowired
+  private PlatformTransactionManager 
+                                          transactionManager;
 
-  private TransactionTemplate transactionTemplate;
+  private TransactionTemplate             transactionTemplate;
 
   
   /* methods */
   @Before
   public void init() {
-    transactionTemplate = new TransactionTemplate(
-        transactionManager, new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
+    transactionTemplate = 
+        new TransactionTemplate(
+                transactionManager, 
+                new DefaultTransactionAttribute(
+                        TransactionDefinition.PROPAGATION_REQUIRES_NEW));
   }
   
 	@Test
 	public void contextLoads() {
 	  // Check if autowiring works.
 	  assertNotNull(this.productService);
+	  assertNotNull(this.dtoConverter);
 	}
 
 	
