@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.udacity.course3.reviews.entity.Comment;
 import com.udacity.course3.reviews.entity.Product;
 import com.udacity.course3.reviews.entity.Review;
 
@@ -21,6 +22,16 @@ public class DummyDataUtil {
 
   
   /* methods */
+  public static Comment generateDummyComment(String suffix) {
+    Comment comment = new Comment();
+    
+    comment.setContent("TEST_CONTENT_" + suffix);
+    comment.setName("TEST_NAME_" + suffix);
+    comment.setCreatedTime(Timestamp.valueOf(LocalDateTime.now()));
+
+    return comment;
+  }
+  
   public static List<Review> generateDummyReview(int n) {
     List<Review> reviewList = new ArrayList<>(n);
     
