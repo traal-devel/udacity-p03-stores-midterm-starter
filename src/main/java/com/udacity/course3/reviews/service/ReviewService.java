@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.udacity.course3.reviews.entity.Review;
 import com.udacity.course3.reviews.ex.ProductNotFoundException;
+import com.udacity.course3.reviews.ex.ReviewNotFoundException;
 import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 
@@ -67,6 +68,13 @@ public class ReviewService {
                  return this.reviewRepository.save(review);
                })
                .orElseThrow(ProductNotFoundException::new);
+  }
+  
+  public Review findById(Integer reviewId) {
+    return this.reviewRepository
+               .findById(reviewId)
+               .orElseThrow(ReviewNotFoundException::new);
+    
   }
   
 }
