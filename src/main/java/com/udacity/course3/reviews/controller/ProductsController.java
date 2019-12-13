@@ -26,6 +26,7 @@ public class ProductsController {
 
   
   /* member variables */
+  // DONE: Wire JPA repositories here
   @Autowired
   private ProductService prodctService;
   
@@ -36,8 +37,6 @@ public class ProductsController {
   }
   
   /* methods */
-  // TODO: Wire JPA repositories here
-  
   /**
    * Creates a product.
    *
@@ -65,7 +64,7 @@ public class ProductsController {
    */
   @RequestMapping(value = "/{id}")
   public ResponseEntity<Product> findById(
-      @PathVariable("id") Long id
+      @PathVariable("id") Integer id
   ) {
     
     // :INFO: Exception-Handling encapsulated in findById Methode (ProductService).
