@@ -62,7 +62,10 @@ public class ProductsController {
    * @param id The id of the product [DONE].
    * @return The product if found, or a 404 not found [DONE].
    */
-  @RequestMapping(value = "/{id}")
+  @RequestMapping(
+      value = "/{id}",
+      method = RequestMethod.GET
+  )
   public ResponseEntity<Product> findById(
       @PathVariable("id") Integer id
   ) {
@@ -78,7 +81,10 @@ public class ProductsController {
    *
    * @return The list of products.
    */
-  @RequestMapping(value = "/", method = RequestMethod.GET)
+  @RequestMapping(
+      value = "/", 
+      method = RequestMethod.GET
+  )
   public List<Product> listProducts() {
     return this.prodctService.list();
   }
