@@ -5,5 +5,5 @@ CREATE TABLE product (
   name VARCHAR(255) NOT NULL,
   description VARCHAR(1000) NOT NULL,
   created_time TIMESTAMP not null,
-  constraint member_pk primary key (product_id)
+  CONSTRAINT member_pk PRIMARY KEY (product_id)
 );

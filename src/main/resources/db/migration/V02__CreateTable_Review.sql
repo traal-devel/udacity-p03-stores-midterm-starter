@@ -7,6 +7,6 @@ CREATE TABLE review (
   author VARCHAR(255) NOT NULL,
   created_time TIMESTAMP not null,
   product_id INT,
-  constraint review_pk primary key (review_id),
-  constraint review_product_pk FOREIGN KEY (product_id) REFERENCES product(product_id)
+  CONSTRAINT review_pk PRIMARY KEY (review_id),
+  CONSTRAINT review_product_pk FOREIGN KEY (product_id) REFERENCES product(product_id)
 );
