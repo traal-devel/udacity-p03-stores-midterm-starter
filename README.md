@@ -22,3 +22,13 @@ The following guides illustrate how to use some features concretely:
 * [Accessing JPA Data with REST](https://spring.io/guides/gs/accessing-data-rest/)
 * [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
 * [Accessing data with MySQL](https://spring.io/guides/gs/accessing-data-mysql/)
+
+
+### Commands
+
+```sql
+GRANT ALL PRIVILEGES ON JDND_C3_MIDTERM.* TO 'udacity'@'localhost' IDENTIFIED BY 'udacity';
+GRANT ALL PRIVILEGES ON JDND_C3_MIDTERM.* TO 'udacity'@'%' IDENTIFIED BY 'udacity';
+
+FLUSH PRIVILEGES;
+```
