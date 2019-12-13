@@ -14,6 +14,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.udacity.course3.reviews.entity.Product;
@@ -99,9 +100,14 @@ public class ReviewsApplicationTests {
         });
     assertNotNull(reviewAdded.getReviewId());
 
-    Product productDB = this.productRepository.findById(productAdded.getId()).get();
-    assertNotNull(productDB.getReviews());
-    assertTrue(productDB.getReviews().size() == 1);
+    transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+      @Override
+      protected void doInTransactionWithoutResult(TransactionStatus status) {
+        Product productDB = ReviewsApplicationTests.this.productRepository.findById(productAdded.getId()).get();
+        assertNotNull(productDB.getReviews());
+        assertTrue(productDB.getReviews().size() == 1);
+      }
+    });
     
   }
   
