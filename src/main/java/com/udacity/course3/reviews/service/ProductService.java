@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.udacity.course3.reviews.entity.Product;
+import com.udacity.course3.reviews.entity.Review;
 import com.udacity.course3.reviews.ex.ProductNotFoundException;
 import com.udacity.course3.reviews.repository.ProductRepository;
 
@@ -40,7 +41,7 @@ public class ProductService {
    * @param id Long
    * @return Product - Found product or else ProductNotFoundException 
    */
-  public Product findById(Long id) {
+  public Product findById(Integer id) {
     return 
         this.productRepository
             .findById(id)
@@ -62,6 +63,7 @@ public class ProductService {
               .map(productToBeUpdated -> {
                 productToBeUpdated.setName(product.getName());
                 productToBeUpdated.setDescription(product.getDescription());
+                productToBeUpdated.setReviews(product.getReviews());
                 return productRepository.save(productToBeUpdated);
               }).orElseThrow(ProductNotFoundException::new);
       
@@ -72,7 +74,7 @@ public class ProductService {
 
     return productDB;
   }
-  
+
   /**
    * Returns the 
    * @return
