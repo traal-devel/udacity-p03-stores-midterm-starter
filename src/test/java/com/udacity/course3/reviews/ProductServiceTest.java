@@ -17,6 +17,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.udacity.course3.reviews.entity.Product;
@@ -115,9 +116,14 @@ public class ProductServiceTest {
         });
     assertNotNull(reviewAdded.getReviewId());
 
-    Product productDB = this.productRepository.findById(productAdded.getId()).get();
-    assertNotNull(productDB.getReviews());
-    assertTrue(productDB.getReviews().size() == 1);
+    transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+      @Override
+      protected void doInTransactionWithoutResult(TransactionStatus status) {
+        Product productDB = ProductServiceTest.this.productRepository.findById(productAdded.getId()).get();
+        assertNotNull(productDB.getReviews());
+        assertTrue(productDB.getReviews().size() == 1);
+      }
+    });
     
   }
   
@@ -155,6 +161,7 @@ public class ProductServiceTest {
   @Test
   public void testProductSizeEqualsFive() {
     int n = 5;
+    long tmpCurrentSize = this.productService.count();
     List<Product> productList = DummyDataUtil.generateDummyProductList(n);
     for (Product product : productList) {
       this.productService.save(product);
@@ -162,7 +169,7 @@ public class ProductServiceTest {
     
     List<Product> productDbList = this.productService.list();
     assertNotNull(productDbList);
-    assertTrue(productDbList.size() == n);
+    assertTrue(productDbList.size() == n + tmpCurrentSize);
   }
   
   @Test
