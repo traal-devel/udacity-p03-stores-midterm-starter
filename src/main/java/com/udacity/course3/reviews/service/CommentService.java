@@ -25,7 +25,18 @@ public class CommentService {
   public CommentService() {
     super();
   }
+  
+  public CommentService(
+      ReviewRepository reviewRepository,
+      CommentRepository commentRepository
+  ) {
+    super();
+    
+    this.commentRepository = commentRepository;
+    this.reviewRepository = reviewRepository;
+  }
 
+  
   /* methods */
   /**
    * Adds the given review to product specified with the parameter productId.
