@@ -1,5 +1,7 @@
 package com.udacity.course3.reviews.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,11 @@ import com.udacity.course3.reviews.ex.ReviewNotFoundException;
 import com.udacity.course3.reviews.repository.CommentRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 
+/**
+ * Implementation of the comment service using jpa repositories.
+ * 
+ * @author traal-devel
+ */
 @Service
 public class CommentService {
 
@@ -55,6 +62,18 @@ public class CommentService {
                  comment.setReview(review);    
                  return this.commentRepository.save(comment);
                })
+               .orElseThrow(ReviewNotFoundException::new);
+  }
+  
+  /**
+   * Finds all comments by using the given review-id.
+   * 
+   * @param reviewId Integer
+   * @return List - the list with comments or ReviewNotFoundException 
+   */
+  public List<Comment> findByReviewId(Integer reviewId) {
+    return this.commentRepository
+               .findByReviewId(reviewId)
                .orElseThrow(ReviewNotFoundException::new);
   }
 
