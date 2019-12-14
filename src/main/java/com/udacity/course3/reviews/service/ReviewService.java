@@ -1,5 +1,7 @@
 package com.udacity.course3.reviews.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,10 +45,14 @@ public class ReviewService {
    * 
    * @param productRepository
    */
-  public ReviewService(ProductRepository productRepository) {
+  public ReviewService(
+      ProductRepository productRepository, 
+      ReviewRepository reviewRepository
+  ) {
     super();
     
     this.productRepository = productRepository;
+    this.reviewRepository = reviewRepository;
   }
   
   /* methods */
@@ -70,11 +76,29 @@ public class ReviewService {
                .orElseThrow(ProductNotFoundException::new);
   }
   
+  /**
+   * Find one review by given parameter.
+   * 
+   * @param reviewId
+   * @return Review - The actual review or ReviewNotFoundException.
+   */
   public Review findById(Integer reviewId) {
     return this.reviewRepository
                .findById(reviewId)
                .orElseThrow(ReviewNotFoundException::new);
     
+  }
+  
+  /**
+   * Find all reviews by given parameter productId.
+   * 
+   * @param productId
+   * @return List - list or ProductNotFountException
+   */
+  public List<Review> findByProductId(Integer productId) {
+    return this.reviewRepository
+               .findByProductId(productId)
+               .orElseThrow(ProductNotFoundException::new);
   }
   
 }
