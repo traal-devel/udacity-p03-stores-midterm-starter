@@ -10,15 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.udacity.course3.reviews.entity.Product;
 import com.udacity.course3.reviews.entity.Review;
-import com.udacity.course3.reviews.service.ProductService;
 import com.udacity.course3.reviews.service.ReviewService;
 
 /**
  * Spring REST controller for working with review entity.
  */
 @RestController
+@RequestMapping("/reviews")
 public class ReviewsController {
 
   
@@ -26,14 +25,11 @@ public class ReviewsController {
   // [DONE] Wire JPA repositories here
   @Autowired
   private ReviewService   reviewService;
-  
-  @Autowired
-  private ProductService  productService;
-  
+
   
   /* constructors */
   /**
-   * 
+   * Default constructor.
    */
   public ReviewsController() {
     super();
@@ -58,7 +54,7 @@ public class ReviewsController {
    * @return The created review or 404 if product id is not found [DONE].
    */
   @RequestMapping(
-      value = "/reviews/products/{productId}", 
+      value = "/products/{productId}", 
       method = RequestMethod.POST
   )
   public ResponseEntity<Review> createReviewForProduct(
@@ -78,15 +74,18 @@ public class ReviewsController {
    * @return The list of reviews.
    */
   @RequestMapping(
-      value = "/reviews/products/{productId}", 
+      value = "/products/{productId}", 
       method = RequestMethod.GET
   )
   public ResponseEntity<List<Review>> listReviewsForProduct(
       @PathVariable("productId") Integer productId
   ) {
     
-    Product product = this.productService.findById(productId);
-    return ResponseEntity.ok(product.getReviews());
+//    Product product = this.productService.findById(productId);
+//    return ResponseEntity.ok(product.getReviews());
+    
+    List<Review> reviewList = this.reviewService.findByProductId(productId);
+    return ResponseEntity.ok(reviewList);
     
   }
 }
