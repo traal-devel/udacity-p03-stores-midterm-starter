@@ -11,9 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.udacity.course3.reviews.entity.Comment;
-import com.udacity.course3.reviews.entity.Review;
 import com.udacity.course3.reviews.service.CommentService;
-import com.udacity.course3.reviews.service.ReviewService;
 
 /**
  * Spring REST controller for working with comment entity.
@@ -27,9 +25,6 @@ public class CommentsController {
   // [DONE] Wire needed JPA repositories here
   @Autowired
   private CommentService  commentService;
-  
-  @Autowired
-  private ReviewService   reviewService;
   
   
   /* constructors */
@@ -82,9 +77,11 @@ public class CommentsController {
       @PathVariable("reviewId") Integer reviewId
   ) {
     
+    // Review review = this.reviewService.findById(reviewId); 
+    // return review.getComments();
+    
     // :INFO: Exception-handling encapsulated in ReviewService.
-    Review review = this.reviewService.findById(reviewId); 
-    return review.getComments();
+    return this.commentService.findByReviewId(reviewId);
     
   }
 }
