@@ -80,7 +80,7 @@ public class CommentsController {
     // Review review = this.reviewService.findById(reviewId); 
     // return review.getComments();
     
-    // :INFO: Exception-handling encapsulated in ReviewService.
+    // :INFO: Exception-handling encapsulated in CommentService.
     return this.commentService.findByReviewId(reviewId);
     
   }
