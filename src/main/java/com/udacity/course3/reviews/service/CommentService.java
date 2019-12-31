@@ -2,13 +2,12 @@ package com.udacity.course3.reviews.service;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.udacity.course3.reviews.entity.Comment;
-import com.udacity.course3.reviews.entity.Review;
 import com.udacity.course3.reviews.ex.ReviewNotFoundException;
-import com.udacity.course3.reviews.repository.CommentRepository;
+import com.udacity.course3.reviews.model.Comment;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 
 /**
@@ -22,9 +21,6 @@ public class CommentService {
   
   /* member variables */
   @Autowired
-  private CommentRepository commentRepository;
-  
-  @Autowired
   private ReviewRepository  reviewRepository;
 
   
@@ -34,12 +30,10 @@ public class CommentService {
   }
   
   public CommentService(
-      ReviewRepository reviewRepository,
-      CommentRepository commentRepository
+      ReviewRepository reviewRepository
   ) {
     super();
     
-    this.commentRepository = commentRepository;
     this.reviewRepository = reviewRepository;
   }
 
@@ -55,12 +49,14 @@ public class CommentService {
    * @param review - Review to store.
    * @return Review - New review from the database.
    */
-  public Comment addComment(Integer reviewId, Comment comment) {
+  public Comment addComment(ObjectId reviewId, Comment comment) {
     return this.reviewRepository
                .findById(reviewId) 
                .map(review -> {
-                 comment.setReview(review);    
-                 return this.commentRepository.save(comment);
+                 review.getComments().add(comment);
+                 
+                 this.reviewRepository.save(review);
+                 return comment; 
                })
                .orElseThrow(ReviewNotFoundException::new);
   }
@@ -71,9 +67,10 @@ public class CommentService {
    * @param reviewId Integer
    * @return List - the list with comments or ReviewNotFoundException 
    */
-  public List<Comment> findByReviewId(Integer reviewId) {
-    return this.commentRepository
-               .findByReviewId(reviewId)
+  public List<Comment> findByReviewId(ObjectId reviewId) {
+    return this.reviewRepository
+               .findById(reviewId)
+               .map(review -> review.getComments())
                .orElseThrow(ReviewNotFoundException::new);
   }
 
