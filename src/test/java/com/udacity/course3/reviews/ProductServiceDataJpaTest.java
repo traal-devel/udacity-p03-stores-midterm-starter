@@ -11,9 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.udacity.course3.reviews.entity.Comment;
 import com.udacity.course3.reviews.entity.Product;
-import com.udacity.course3.reviews.entity.Review;
 import com.udacity.course3.reviews.util.DummyDataUtil;
 
 /**
@@ -48,35 +46,17 @@ public class ProductServiceDataJpaTest extends AbstractDataJpaTest {
     // :INFO: Use transaction to ensure that entity is written really to h2 database
     // so FetchType.LAZY (-> method getReview) can work. 
     // [START] - Transaction
-    Product productRet = this.transactionTemplate.execute((status) -> {
+    this.transactionTemplate.execute((status) -> {
       Product product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
       Product productDB = this.productService.save(product);
       
       assertNotNull(productDB);
       assertNotNull(productDB.getId());
       
-      Review review = DummyDataUtil.generateDummyReview(1).get(0);
-      review.setProduct(productDB);
-      Review reviewAdded = ProductServiceDataJpaTest.this.reviewRepository.save(review);
-      
-      assertNotNull(reviewAdded.getId());
-      
       return productDB;
     });
     // [END] - Transaction. Use this pattern, so that getReviews() method 
     //         works correctly as a JUnit test-case.
-    
-    // :INFO: Flushes also does not work in this context. Entities are not written to database.
-    // this.productRepository.flush();
-    // this.reviewRepository.flush();
-    
-    // :INFO: Has to run in a transcation context too, to make 'mvn clean package' work.
-    this.transactionTemplate.execute((status) -> {
-      Product productDB = this.productRepository.findById(productRet.getId()).get();
-      assertNotNull(productDB.getReviews());
-      assertTrue(productDB.getReviews().size() == 1);
-      return null;
-    });
     
   }
   
@@ -134,47 +114,6 @@ public class ProductServiceDataJpaTest extends AbstractDataJpaTest {
     
     assertNotNull(productFindById);
     assertEquals(productFindById.getId(), productDB.getId());
-    
-  }
-  
-  @Test
-  public void testCreateProductReviewComment() {
-    
-    // tansaction start.
-    Product productRet = transactionTemplate.execute((status) -> {
-      Product product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
-      Product productDB = this.productService.save(product);
-      
-      assertNotNull(productDB);
-      assertNotNull(productDB.getId());
-      
-      Review review = DummyDataUtil.generateDummyReview(1).get(0);
-      Review reviewDB = this.reviewService.addReview(productDB.getId(), review);
-      
-      assertNotNull(reviewDB);
-      assertNotNull(reviewDB.getId());
-      
-      Comment comment = DummyDataUtil.generateDummyComment("_1");
-      Comment commentDB = this.commentService.addComment(reviewDB.getId(), comment);
-      
-      assertNotNull(commentDB);
-      assertNotNull(commentDB.getId());
-      
-      assertEquals(commentDB.getReview().getId(), reviewDB.getId());
-      assertEquals(reviewDB.getProduct().getId(), productDB.getId());
-      
-      return productDB;
-    });
-    // transaction end, data is flushed. 
-      
-    // now we can read the new data marked as 'OneToMany' out of the database.
-    transactionTemplate.execute((status) -> {
-      Product productDB = this.productService.findById(productRet.getId());
-      assertNotNull(productDB);
-      assertNotNull(productDB.getReviews());
-      
-      return null;
-    });
     
   }
   
