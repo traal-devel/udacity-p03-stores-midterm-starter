@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.udacity.course3.reviews.entity.Review;
 import com.udacity.course3.reviews.ex.ProductNotFoundException;
 import com.udacity.course3.reviews.ex.ReviewNotFoundException;
+import com.udacity.course3.reviews.model.Review;
 import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 
@@ -70,7 +70,7 @@ public class ReviewService {
     return this.productRepository
                .findById(productId) 
                .map(product -> {
-                 review.setProduct(product);    
+                 review.setProductId(productId);    
                  return this.reviewRepository.save(review);
                })
                .orElseThrow(ProductNotFoundException::new);
@@ -96,6 +96,7 @@ public class ReviewService {
    * @return List - list or ProductNotFountException
    */
   public List<Review> findByProductId(Integer productId) {
+   
     return this.reviewRepository
                .findByProductId(productId)
                .orElseThrow(ProductNotFoundException::new);
