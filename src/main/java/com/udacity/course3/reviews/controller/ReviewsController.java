@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.udacity.course3.reviews.entity.Review;
+import com.udacity.course3.reviews.model.Review;
 import com.udacity.course3.reviews.service.ReviewService;
 
 /**
