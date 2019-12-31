@@ -1,20 +1,14 @@
 package com.udacity.course3.reviews.entity;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Product Entity.
@@ -42,13 +36,6 @@ public class Product {
   @Column(name = "created_time")
   private Timestamp createdTime;
   
-  @OneToMany(
-    mappedBy = "product", 
-    fetch = FetchType.LAZY
-  )
-  @JsonIgnore
-  private List<Review> reviews;
-
   
   /* constructors */
   public Product() {
@@ -87,14 +74,6 @@ public class Product {
 
   public void setCreatedTime(Timestamp createdTime) {
     this.createdTime = createdTime;
-  }
-
-  public List<Review> getReviews() {
-    return reviews;
-  }
-
-  public void setReviews(List<Review> reviews) {
-    this.reviews = reviews;
   }
 
 }
