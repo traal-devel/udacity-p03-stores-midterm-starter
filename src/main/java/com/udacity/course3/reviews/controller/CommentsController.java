@@ -2,6 +2,7 @@ package com.udacity.course3.reviews.controller;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +52,7 @@ public class CommentsController {
     method = RequestMethod.POST
   )
   public ResponseEntity<Comment> createCommentForReview(
-      @PathVariable("reviewId") Integer reviewId,
+      @PathVariable("reviewId") ObjectId reviewId,
       @RequestBody Comment comment
   ) {
     
@@ -74,7 +75,7 @@ public class CommentsController {
     method = RequestMethod.GET
   )
   public List<Comment> listCommentsForReview(
-      @PathVariable("reviewId") Integer reviewId
+      @PathVariable("reviewId") ObjectId reviewId
   ) {
     
     // Review review = this.reviewService.findById(reviewId); 
