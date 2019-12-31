@@ -80,7 +80,7 @@ public class Review {
     return createdTime;
   }
 
-  public void setCreatedTime(Timestamp createdTime) {
+  public void setCreatedTime(Date createdTime) {
     this.createdTime = createdTime;
   }
 
