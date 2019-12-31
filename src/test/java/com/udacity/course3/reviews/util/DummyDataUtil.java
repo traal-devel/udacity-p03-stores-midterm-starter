@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.udacity.course3.reviews.entity.Comment;
 import com.udacity.course3.reviews.entity.Product;
-import com.udacity.course3.reviews.entity.Review;
+import com.udacity.course3.reviews.model.Comment;
+import com.udacity.course3.reviews.model.Review;
 
 public class DummyDataUtil {
 
