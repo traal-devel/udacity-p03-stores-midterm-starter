@@ -10,9 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.udacity.course3.reviews.entity.Product;
-import com.udacity.course3.reviews.entity.Review;
+import com.udacity.course3.reviews.model.Review;
 import com.udacity.course3.reviews.service.ReviewService;
 import com.udacity.course3.reviews.util.DummyDataUtil;
 
@@ -60,7 +59,7 @@ public class ReviewControllerTest {
   public void setup() {
     List<Review> reviewList = DummyDataUtil.generateDummyReview(1);
     Review firstReview = reviewList.get(0);
-    firstReview.setId(1);
+    firstReview.setId(new ObjectId());
     
     given(reviewService.addReview(any(), any())).willReturn(firstReview);
     given(reviewService.findByProductId(any())).willReturn(reviewList);
@@ -84,7 +83,7 @@ public class ReviewControllerTest {
         )
         .andExpect(status().isOk())
         .andExpect(content().json("{}"))
-        .andExpect(jsonPath("$.id", is(1)))
+        .andExpect(jsonPath("$.id").isNotEmpty())
     ;
   }
   
@@ -98,7 +97,7 @@ public class ReviewControllerTest {
         )
         .andExpect(status().isOk())
         .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$[0].id", is(1)))
+        .andExpect(jsonPath("$[0].id").isNotEmpty())
     ;
   }
   
