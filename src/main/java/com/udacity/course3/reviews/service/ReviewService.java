@@ -2,6 +2,7 @@ package com.udacity.course3.reviews.service;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,7 +83,7 @@ public class ReviewService {
    * @param reviewId
    * @return Review - The actual review or ReviewNotFoundException.
    */
-  public Review findById(Integer reviewId) {
+  public Review findById(ObjectId reviewId) {
     return this.reviewRepository
                .findById(reviewId)
                .orElseThrow(ReviewNotFoundException::new);
