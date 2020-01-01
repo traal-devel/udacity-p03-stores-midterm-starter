@@ -1,6 +1,5 @@
 package com.udacity.course3.reviews.model;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
@@ -11,13 +10,13 @@ public class Comment {
   
   /* member variables */
   @Id
-  private ObjectId id;
+  private ObjectId  id;
   
-  private String name;
+  private String    name;
   
-  private String content;
+  private String    content;
   
-  private Date createdTime;
+  private Date      createdTime;
   
   
   /* constructors */
