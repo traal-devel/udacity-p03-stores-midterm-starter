@@ -1,6 +1,5 @@
 package com.udacity.course3.reviews.model;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,18 +18,19 @@ public class Review {
   
   /* member variables */
   @Id
-  private ObjectId id;
+  private ObjectId  id;
   
-  private String title;
+  private String    title;
   
-  private String body;
+  private String    body;
   
-  private String author;
+  private String    author;
   
-  private Date createdTime;
+  private Date      createdTime;
   
   // :INFO: This is the primary key of the mysql database. 
-  private Integer productId;
+  @JsonIgnore
+  private Integer   productId;
   
   // :INFO: we immediately initialise the comments, so we can avoid a NullPointerException
   @JsonIgnore
