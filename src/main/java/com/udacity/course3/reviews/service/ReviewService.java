@@ -100,6 +100,7 @@ public class ReviewService {
    
     return this.reviewRepository
                .findByProductId(productId)
+               .filter(x -> !x.isEmpty())
                .orElseThrow(ProductNotFoundException::new);
   }
   
