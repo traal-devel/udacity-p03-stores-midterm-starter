@@ -53,6 +53,8 @@ public class CommentService {
     return this.reviewRepository
                .findById(reviewId) 
                .map(review -> {
+                 // :INFO: Set manually an ObjectId, so we can find a certain comment.
+                 comment.setId(new ObjectId());
                  review.getComments().add(comment);
                  
                  this.reviewRepository.save(review);
