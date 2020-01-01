@@ -38,6 +38,7 @@ CREATE DATABASE JDND_C3_MIDTERM;
 GRANT ALL PRIVILEGES ON JDND_C3_MIDTERM.* TO 'udacity'@'localhost' IDENTIFIED BY 'udacity';
 GRANT ALL PRIVILEGES ON JDND_C3_MIDTERM.* TO 'udacity'@'%' IDENTIFIED BY 'udacity';
 FLUSH PRIVILEGES;
+```
 
 ### For mysql and mongodb solution
 ```sql
