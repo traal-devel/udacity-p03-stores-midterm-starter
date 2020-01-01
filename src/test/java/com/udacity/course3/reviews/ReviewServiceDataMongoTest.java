@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.udacity.course3.reviews.entity.Product;
+import com.udacity.course3.reviews.ex.ProductNotFoundException;
 import com.udacity.course3.reviews.model.Review;
 import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
@@ -66,13 +67,9 @@ public class ReviewServiceDataMongoTest {
     assertNotNull(this.reviewService);
   }
     
-  @Test
+  @Test(expected = ProductNotFoundException.class)
   public void testFindByProductIdEqualsZero() {
-    List<Review> reviewList = this.reviewService.findByProductId(1);
-    assertNotNull(reviewList);
-    assertTrue("Size of list not correct. Should be 1 but is " + reviewList.size() ,
-        reviewList.size() == 0);
-    
+    this.reviewService.findByProductId(1);
   }
   
   @Test
