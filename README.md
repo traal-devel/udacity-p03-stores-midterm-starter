@@ -24,6 +24,12 @@ The following guides illustrate how to use some features concretely:
 * [Accessing data with MySQL](https://spring.io/guides/gs/accessing-data-mysql/)
 
 
+### Swagger
+
+Swagger-UI was added so the interface can be easily tested with the url:
+
+* http://localhost:8080/swagger-ui.html
+
 ### Commands
 
 #### For mysql only solution
