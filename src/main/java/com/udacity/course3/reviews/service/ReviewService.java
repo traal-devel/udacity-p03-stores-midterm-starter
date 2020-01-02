@@ -2,6 +2,7 @@ package com.udacity.course3.reviews.service;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import com.udacity.course3.reviews.data.model.Review;
@@ -128,6 +130,10 @@ public class ReviewService {
     TypedAggregation<Review> agg = 
         newAggregation(
             Review.class,
+            match(
+                Criteria.where("productId")
+                        .is(productId)
+            ),
             group("productId")       
               .avg("rating")
               .as("avgRating")
