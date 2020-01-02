@@ -53,3 +53,27 @@ GRANT ALL PRIVILEGES ON JDND_C3_MIDTERM_V2.* TO 'udacity'@'localhost' IDENTIFIED
 GRANT ALL PRIVILEGES ON JDND_C3_MIDTERM_V2.* TO 'udacity'@'%' IDENTIFIED BY 'udacity';
 FLUSH PRIVILEGES;
 ```
+
+
+### Githug - Pull Request
+
+Links:
+* [Continous Integration](https://github.com/marketplace/category/continuous-integration)
+
+
+### Commands
+
+**Step 1: From your project repository, bring in the changes and test.**
+```bash
+git fetch origin
+git checkout -b feat/mongodb-integration origin/feat/mongodb-integration
+git merge master
+```
+
+**Step 2: Merge the changes and update on GitHub.**
+```bash
+git checkout master
+git merge --no-ff feat/mongodb-integration
+git push origin master
+```
+
