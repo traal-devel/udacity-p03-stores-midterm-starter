@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.udacity.course3.reviews.entity.Product;
-import com.udacity.course3.reviews.model.Comment;
-import com.udacity.course3.reviews.model.Review;
+import com.udacity.course3.reviews.data.entity.Product;
+import com.udacity.course3.reviews.data.model.Comment;
+import com.udacity.course3.reviews.data.model.Review;
 
 public class DummyDataUtil {
 
@@ -41,6 +41,7 @@ public class DummyDataUtil {
       review.setTitle("TEST_TITLE_" + i);
       review.setBody("TEST_BODY_" + i);
       review.setCreatedTime(Timestamp.valueOf(LocalDateTime.now()));
+      review.setRating((int)(Math.random() * 5));
       reviewList.add(review);
     }
     
