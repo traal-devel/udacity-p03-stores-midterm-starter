@@ -33,6 +33,7 @@ public class ReviewCreatingDTO {
   
   @Min(value = 1)
   @Max(value = 5)
+  @NotNull
   private Integer   rating;    
   
   
