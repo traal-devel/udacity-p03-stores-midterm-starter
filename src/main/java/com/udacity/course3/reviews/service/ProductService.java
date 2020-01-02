@@ -5,13 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.udacity.course3.reviews.entity.Product;
-import com.udacity.course3.reviews.entity.Review;
+import com.udacity.course3.reviews.data.entity.Product;
 import com.udacity.course3.reviews.ex.ProductNotFoundException;
 import com.udacity.course3.reviews.repository.ProductRepository;
 
 /**
- * Implementation of the product service usind the jpa repository.
+ * Implementation of the product service using the jpa repository.
  * 
  * @author traal-devel
  */
@@ -63,7 +62,6 @@ public class ProductService {
               .map(productToBeUpdated -> {
                 productToBeUpdated.setName(product.getName());
                 productToBeUpdated.setDescription(product.getDescription());
-                productToBeUpdated.setReviews(product.getReviews());
                 return productRepository.save(productToBeUpdated);
               }).orElseThrow(ProductNotFoundException::new);
       

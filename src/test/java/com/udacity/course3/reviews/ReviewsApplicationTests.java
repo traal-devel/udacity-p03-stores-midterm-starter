@@ -15,7 +15,8 @@ import com.udacity.course3.reviews.service.ReviewService;
 /**
  * Reviews Application basic tests.
  * 
- * :INFO: Data JPA Test (h2 embedded database) are done in separate classes.
+ * :INFO: Data JPA (h2 embedded database) and Data Mongo tests are done 
+ * in separate classes.
  * 
  * @author traal-devel
  */
@@ -36,7 +37,6 @@ public class ReviewsApplicationTests {
   
   @Autowired
   private CommentService  commentService;
-  
   
   
   /* constructors */
