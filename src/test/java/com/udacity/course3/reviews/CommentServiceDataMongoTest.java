@@ -18,8 +18,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.udacity.course3.reviews.model.Comment;
-import com.udacity.course3.reviews.model.Review;
+import com.udacity.course3.reviews.data.model.Comment;
+import com.udacity.course3.reviews.data.model.Review;
 import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 import com.udacity.course3.reviews.service.CommentService;

@@ -1,10 +1,15 @@
-package com.udacity.course3.reviews.model;
+package com.udacity.course3.reviews.data.model;
 
 import java.util.Date;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
+/**
+ * Mongo DB model of comment stored with an instance of review
+ * 
+ * @author traal-devel
+ */
 public class Comment {
 
   

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.udacity.course3.reviews.entity.Product;
+import com.udacity.course3.reviews.data.entity.Product;
 import com.udacity.course3.reviews.ex.ProductNotFoundException;
 import com.udacity.course3.reviews.repository.ProductRepository;
 

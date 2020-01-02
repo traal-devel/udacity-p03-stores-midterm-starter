@@ -26,7 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.udacity.course3.reviews.model.Comment;
+import com.udacity.course3.reviews.data.model.Comment;
 import com.udacity.course3.reviews.service.CommentService;
 import com.udacity.course3.reviews.util.DummyDataUtil;
 

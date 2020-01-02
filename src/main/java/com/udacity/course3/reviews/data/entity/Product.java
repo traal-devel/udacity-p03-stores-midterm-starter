@@ -1,4 +1,4 @@
-package com.udacity.course3.reviews.entity;
+package com.udacity.course3.reviews.data.entity;
 
 import java.sql.Timestamp;
 
@@ -24,17 +24,17 @@ public class Product {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name="product_id")
-  private Integer id;
+  private Integer       id;
   
   @Column(name="name")
   @NotNull
-  private String name;
+  private String        name;
   
   @Column(name="description")
-  private String description;
+  private String        description;
   
   @Column(name = "created_time")
-  private Timestamp createdTime;
+  private Timestamp     createdTime;
   
   
   /* constructors */

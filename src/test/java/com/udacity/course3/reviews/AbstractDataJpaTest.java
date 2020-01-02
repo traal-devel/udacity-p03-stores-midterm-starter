@@ -13,7 +13,7 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.interceptor.DefaultTransactionAttribute;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import com.udacity.course3.reviews.entity.Product;
+import com.udacity.course3.reviews.data.entity.Product;
 import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.service.ProductService;
 import com.udacity.course3.reviews.util.DummyDataUtil;
