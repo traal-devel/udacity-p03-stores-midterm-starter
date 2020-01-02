@@ -6,8 +6,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.udacity.course3.reviews.data.model.Comment;
 import com.udacity.course3.reviews.ex.ReviewNotFoundException;
-import com.udacity.course3.reviews.model.Comment;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 
 /**
