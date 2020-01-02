@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Arrays;
 
@@ -25,8 +26,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.udacity.course3.reviews.entity.Product;
+import com.udacity.course3.reviews.data.entity.Product;
 import com.udacity.course3.reviews.service.ProductService;
+import com.udacity.course3.reviews.service.ReviewService;
 import com.udacity.course3.reviews.util.DummyDataUtil;
 
 @RunWith(SpringRunner.class)
@@ -36,15 +38,23 @@ import com.udacity.course3.reviews.util.DummyDataUtil;
 public class ProductControllerTest {
 
   
+  /* constants */
+  private static final int AVG_RATING = 4;
+  
+  
   /* member variables */
   @Autowired
   private MockMvc mvc;
 
   @Autowired
-  private JacksonTester<Product> jsonProdcut;
+  private JacksonTester<Product>  jsonProdcut;
 
   @MockBean
-  private ProductService  productService;
+  private ProductService          productService;
+  
+  @MockBean 
+  private ReviewService           reviewService;
+  
   
   /* constructors */
   public ProductControllerTest() {
@@ -67,6 +77,9 @@ public class ProductControllerTest {
     given(productService.save(any())).willReturn(product);
     given(productService.list()).willReturn(Arrays.asList(product, product2, product3));
     
+    given(reviewService.calcAvgRating(any()))
+            .willReturn(new BigDecimal(ProductControllerTest.AVG_RATING));
+    
   }
   
   /**
@@ -85,7 +98,8 @@ public class ProductControllerTest {
       .andExpect(status().isOk())
       .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
       .andExpect(content().json("{}"))
-      .andExpect(jsonPath("$.id", is(1)));
+      .andExpect(jsonPath("$.id", is(1)))
+      .andExpect(jsonPath("$.averageRating", is(ProductControllerTest.AVG_RATING)));
     ;
   }
   
