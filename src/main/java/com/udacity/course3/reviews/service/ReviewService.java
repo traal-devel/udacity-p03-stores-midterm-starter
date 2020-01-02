@@ -1,14 +1,23 @@
 package com.udacity.course3.reviews.service;
 
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.stereotype.Service;
 
+import com.udacity.course3.reviews.data.model.Review;
 import com.udacity.course3.reviews.ex.ProductNotFoundException;
 import com.udacity.course3.reviews.ex.ReviewNotFoundException;
-import com.udacity.course3.reviews.model.Review;
 import com.udacity.course3.reviews.repository.ProductRepository;
 import com.udacity.course3.reviews.repository.ReviewRepository;
 
@@ -27,6 +36,9 @@ public class ReviewService {
 
   @Autowired
   private ProductRepository   productRepository;
+  
+  @Autowired
+  private MongoTemplate       mongoTemplate;
 
   
   /* constructors */
@@ -102,6 +114,37 @@ public class ReviewService {
                .findByProductId(productId)
                .filter(x -> !x.isEmpty())
                .orElseThrow(ProductNotFoundException::new);
+  }
+  
+  
+  /**
+   * Calculates the average rating of the given product-id.
+   * 
+   * @param productId Integer
+   * @return BigDecimal - Average rating or null if product not exists
+   */
+  public BigDecimal calcAvgRating(Integer productId) {
+    
+    TypedAggregation<Review> agg = 
+        newAggregation(
+            Review.class,
+            group("productId")       
+              .avg("rating")
+              .as("avgRating")
+        );
+    AggregationResults<Document> result = 
+                              this.mongoTemplate.aggregate(agg, Document.class);
+    List<Document> resultList = result.getMappedResults();
+    BigDecimal avgRating = null;
+    
+    if (resultList != null && resultList.size() > 0) {
+      avgRating = new BigDecimal(
+                      (double)resultList.get(0).get("avgRating")
+                  ).setScale(2, RoundingMode.HALF_UP);
+    }
+    
+    return avgRating;
+    
   }
   
 }
