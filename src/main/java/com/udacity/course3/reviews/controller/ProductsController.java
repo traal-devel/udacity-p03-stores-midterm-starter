@@ -101,11 +101,17 @@ public class ProductsController {
   )
   public List<ProductDTO> listProducts() {
 
-    return ObjectMapperUtils.mapAll(
+    List<ProductDTO> prodcutList = ObjectMapperUtils.mapAll(
         this.prodctService.list(), 
         ProductDTO.class
     );
   
+    prodcutList.forEach(x -> {
+      BigDecimal avgRating = this.reviewService.calcAvgRating(x.getId());
+      x.setAverageRating(avgRating);
+    });
+    
+    return prodcutList;
   }
   
 }
