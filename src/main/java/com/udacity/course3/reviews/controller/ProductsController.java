@@ -1,5 +1,6 @@
 package com.udacity.course3.reviews.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -14,8 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.udacity.course3.reviews.entity.Product;
+import com.udacity.course3.reviews.data.dto.ProductCreatingDTO;
+import com.udacity.course3.reviews.data.dto.ProductDTO;
+import com.udacity.course3.reviews.data.entity.Product;
 import com.udacity.course3.reviews.service.ProductService;
+import com.udacity.course3.reviews.service.ReviewService;
+import com.udacity.course3.reviews.utils.ObjectMapperUtils;
 
 /**
  * Spring REST controller for working with product entity.
@@ -28,7 +33,10 @@ public class ProductsController {
   /* member variables */
   // DONE: Wire JPA repositories here
   @Autowired
-  private ProductService prodctService;
+  private ProductService  prodctService;
+  
+  @Autowired
+  private ReviewService   reviewService;
   
   
   /* constructors */
@@ -49,11 +57,12 @@ public class ProductsController {
   )
   @ResponseStatus(HttpStatus.CREATED)
   public void createProduct(
-      @Valid @RequestBody Product product
+      @Valid @RequestBody ProductCreatingDTO productDTO
   ) {
-    
+  
+    Product product = ObjectMapperUtils.map(productDTO, Product.class);
     this.prodctService.save(product);
-    
+
   }
 
   /**
@@ -66,13 +75,18 @@ public class ProductsController {
       value = "/{id}",
       method = RequestMethod.GET
   )
-  public ResponseEntity<Product> findById(
-      @PathVariable("id") Integer id
+  public ResponseEntity<ProductDTO> findById(
+      @PathVariable("id") Integer productId
   ) {
     
     // :INFO: Exception-Handling encapsulated in findById Methode (ProductService).
-    Product product = this.prodctService.findById(id);
-    return ResponseEntity.ok(product);
+    Product product = this.prodctService.findById(productId);
+    ProductDTO productDTO = ObjectMapperUtils.map(product, ProductDTO.class);
+    
+    BigDecimal avgRating = this.reviewService.calcAvgRating(productId);
+    productDTO.setAverageRating(avgRating);
+    
+    return ResponseEntity.ok(productDTO);
         
   }
 
@@ -85,8 +99,13 @@ public class ProductsController {
       value = "/", 
       method = RequestMethod.GET
   )
-  public List<Product> listProducts() {
-    return this.prodctService.list();
+  public List<ProductDTO> listProducts() {
+
+    return ObjectMapperUtils.mapAll(
+        this.prodctService.list(), 
+        ProductDTO.class
+    );
+  
   }
   
 }
