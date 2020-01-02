@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.udacity.course3.reviews.entity.Product;
+import com.udacity.course3.reviews.data.entity.Product;
 import com.udacity.course3.reviews.util.DummyDataUtil;
 
 /**
