@@ -55,7 +55,7 @@ FLUSH PRIVILEGES;
 ```
 
 
-### Githug - Pull Request
+### Github - Pull Request
 
 Links:
 * [Continous Integration](https://github.com/marketplace/category/continuous-integration)
