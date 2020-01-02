@@ -30,6 +30,12 @@ Swagger-UI was added so the interface can be easily tested with the url:
 
 * http://localhost:8080/swagger-ui.html
 
+### Design Rationals
+
+* DTO implementation based on: 
+  * [Automatically Mapping DTO to Entity on Spring Boot APIs](https://auth0.com/blog/automatically-mapping-dto-to-entity-on-spring-boot-apis/)
+  * [ModelMapper, mapping list of Entites to List of DTO objects](https://stackoverflow.com/questions/47929674/modelmapper-mapping-list-of-entites-to-list-of-dto-objects)
+
 ### Commands
 
 #### For mysql only solution
