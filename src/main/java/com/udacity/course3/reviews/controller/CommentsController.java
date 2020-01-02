@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.udacity.course3.reviews.model.Comment;
+import com.udacity.course3.reviews.data.dto.CommentCreatingDTO;
+import com.udacity.course3.reviews.data.dto.CommentDTO;
+import com.udacity.course3.reviews.data.model.Comment;
 import com.udacity.course3.reviews.service.CommentService;
+import com.udacity.course3.reviews.utils.ObjectMapperUtils;
 
 /**
  * Spring REST controller for working with comment entity.
@@ -53,9 +56,9 @@ public class CommentsController {
   )
   public ResponseEntity<Comment> createCommentForReview(
       @PathVariable("reviewId") ObjectId reviewId,
-      @RequestBody Comment comment
+      @RequestBody CommentCreatingDTO commentDTO
   ) {
-    
+    Comment comment = ObjectMapperUtils.map(commentDTO, Comment.class);
     Comment commentDB = this.commentService.addComment(reviewId, comment);
     return ResponseEntity.ok(commentDB);
     
@@ -74,7 +77,7 @@ public class CommentsController {
     value = "/reviews/{reviewId}", 
     method = RequestMethod.GET
   )
-  public List<Comment> listCommentsForReview(
+  public List<CommentDTO> listCommentsForReview(
       @PathVariable("reviewId") ObjectId reviewId
   ) {
     
@@ -82,7 +85,10 @@ public class CommentsController {
     // return review.getComments();
     
     // :INFO: Exception-handling encapsulated in CommentService.
-    return this.commentService.findByReviewId(reviewId);
+    return ObjectMapperUtils.mapAll(
+        this.commentService.findByReviewId(reviewId),
+        CommentDTO.class
+    );
     
   }
 }

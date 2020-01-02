@@ -2,6 +2,8 @@ package com.udacity.course3.reviews.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.udacity.course3.reviews.model.Review;
+import com.udacity.course3.reviews.data.dto.ReviewCreatingDTO;
+import com.udacity.course3.reviews.data.dto.ReviewDTO;
+import com.udacity.course3.reviews.data.model.Review;
 import com.udacity.course3.reviews.service.ReviewService;
+import com.udacity.course3.reviews.utils.ObjectMapperUtils;
 
 /**
  * Spring REST controller for working with review entity.
@@ -59,9 +64,10 @@ public class ReviewsController {
   )
   public ResponseEntity<Review> createReviewForProduct(
       @PathVariable("productId") Integer productId,
-      @RequestBody Review review
+      @Valid @RequestBody ReviewCreatingDTO reviewDTO
   ) {
     
+    Review review = ObjectMapperUtils.map(reviewDTO, Review.class);
     Review reviewDB = this.reviewService.addReview(productId, review);
     return ResponseEntity.ok(reviewDB);
     
@@ -77,14 +83,18 @@ public class ReviewsController {
       value = "/products/{productId}", 
       method = RequestMethod.GET
   )
-  public ResponseEntity<List<Review>> listReviewsForProduct(
+  public ResponseEntity<List<ReviewDTO>> listReviewsForProduct(
       @PathVariable("productId") Integer productId
   ) {
     
 //    Product product = this.productService.findById(productId);
 //    return ResponseEntity.ok(product.getReviews());
     
-    List<Review> reviewList = this.reviewService.findByProductId(productId);
+    List<ReviewDTO> reviewList = 
+              ObjectMapperUtils.mapAll(
+                  this.reviewService.findByProductId(productId), 
+                  ReviewDTO.class
+              );
     return ResponseEntity.ok(reviewList);
     
   }
