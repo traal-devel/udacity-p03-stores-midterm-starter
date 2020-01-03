@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.net.URI;
 import java.util.Arrays;
 
-import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.udacity.course3.reviews.data.model.Comment;
+import com.udacity.course3.reviews.data.dto.CommentDTO;
 import com.udacity.course3.reviews.service.CommentService;
 import com.udacity.course3.reviews.util.DummyDataUtil;
 
@@ -39,30 +38,32 @@ public class CommentsControllerTest {
   
   /* member variables */
   @Autowired
-  private MockMvc mvc;
+  private MockMvc                     mvc;
 
   @Autowired
-  private JacksonTester<Comment> jsonComment;
+  private JacksonTester<CommentDTO>   jsonComment;
 
   @MockBean
-  private CommentService  commentService;
+  private CommentService              commentService;
+  
   
   /* constructors */
   public CommentsControllerTest() {
     super();
   }
 
+  
   /* methods */
   @Before
   public void setup() {
-    Comment comment = DummyDataUtil.generateDummyComment("_1");
-    comment.setId(new ObjectId());
+    CommentDTO comment = DummyDataUtil.generateDummyComment("_1");
+    comment.setId(1);
     
-    Comment comment2 = DummyDataUtil.generateDummyComment("_2");
-    comment2.setId(new ObjectId());
+    CommentDTO comment2 = DummyDataUtil.generateDummyComment("_2");
+    comment2.setId(2);
     
-    Comment comment3 = DummyDataUtil.generateDummyComment("_3");
-    comment3.setId(new ObjectId());
+    CommentDTO comment3 = DummyDataUtil.generateDummyComment("_3");
+    comment3.setId(3);
     
     given(commentService.addComment(any(), any()))
         .willReturn(comment3);
@@ -78,28 +79,28 @@ public class CommentsControllerTest {
    */
   @Test
   public void testFindReviewById() throws Exception {
-    ObjectId reviewId = new ObjectId();
+    Integer reviewId = 1;
     mvc.perform(
-          get(new URI("/comments/reviews/" + reviewId.toString()))
+          get(new URI("/comments/reviews/" + reviewId))
             .contentType(MediaType.APPLICATION_JSON_UTF8)
             .accept(MediaType.APPLICATION_JSON_UTF8)
         )
         .andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
         .andExpect(jsonPath("$").isArray())
-        .andExpect(jsonPath("$[0].id").isNotEmpty())
-        .andExpect(jsonPath("$[1].id").isNotEmpty())
-        .andExpect(jsonPath("$[2].id").isNotEmpty())
+        .andExpect(jsonPath("$[0].id", is(1)))
+        .andExpect(jsonPath("$[1].id", is(2)))
+        .andExpect(jsonPath("$[2].id", is(3)))
         ;
   }
   
   @Test
   public void testAddCommentToReview() throws Exception {
-    Comment comment3 = DummyDataUtil.generateDummyComment("_3");
+    CommentDTO comment3 = DummyDataUtil.generateDummyComment("_3");
     
-    ObjectId reviewId = new ObjectId();
+    Integer reviewId = 1;
     mvc.perform(
-          post(new URI("/comments/reviews/" + reviewId.toString()))
+          post(new URI("/comments/reviews/" + reviewId))
             .content(jsonComment.write(comment3).getJson())
             .contentType(MediaType.APPLICATION_JSON_UTF8)
             .accept(MediaType.APPLICATION_JSON_UTF8)

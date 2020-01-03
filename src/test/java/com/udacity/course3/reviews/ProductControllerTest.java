@@ -26,7 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.udacity.course3.reviews.data.entity.Product;
+import com.udacity.course3.reviews.data.dto.ProductDTO;
 import com.udacity.course3.reviews.service.ProductService;
 import com.udacity.course3.reviews.service.ReviewService;
 import com.udacity.course3.reviews.util.DummyDataUtil;
@@ -39,21 +39,21 @@ public class ProductControllerTest {
 
   
   /* constants */
-  private static final int AVG_RATING = 4;
+  private static final int           AVG_RATING = 4;
   
   
   /* member variables */
   @Autowired
-  private MockMvc mvc;
+  private MockMvc                    mvc;
 
   @Autowired
-  private JacksonTester<Product>  jsonProdcut;
+  private JacksonTester<ProductDTO>  jsonProdcut;
 
   @MockBean
-  private ProductService          productService;
+  private ProductService             productService;
   
   @MockBean 
-  private ReviewService           reviewService;
+  private ReviewService              reviewService;
   
   
   /* constructors */
@@ -64,13 +64,13 @@ public class ProductControllerTest {
   /* methods */
   @Before
   public void setup() {
-    Product product = DummyDataUtil.generateDummyProduct("_1", "Product description");
+    ProductDTO product = DummyDataUtil.generateDummyProduct("_1", "Product description");
     product.setId(1);
     
-    Product product2 = DummyDataUtil.generateDummyProduct("_2", "Product description");
+    ProductDTO product2 = DummyDataUtil.generateDummyProduct("_2", "Product description");
     product2.setId(2);
     
-    Product product3 = DummyDataUtil.generateDummyProduct("_3", "Product description");
+    ProductDTO product3 = DummyDataUtil.generateDummyProduct("_3", "Product description");
     product3.setId(3);
     
     given(productService.findById(any())).willReturn(product);
@@ -120,7 +120,7 @@ public class ProductControllerTest {
   
   @Test
   public void testCreateProduct() throws Exception {
-    Product product = DummyDataUtil.generateDummyProduct("_1", "Product description");
+    ProductDTO product = DummyDataUtil.generateDummyProduct("_1", "Product description");
     mvc.perform(
         post(new URI("/products/"))
           .content(jsonProdcut.write(product).getJson())
