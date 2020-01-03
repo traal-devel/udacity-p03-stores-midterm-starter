@@ -2,7 +2,6 @@ package com.udacity.course3.reviews.controller;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.udacity.course3.reviews.data.dto.CommentCreatingDTO;
 import com.udacity.course3.reviews.data.dto.CommentDTO;
-import com.udacity.course3.reviews.data.model.Comment;
 import com.udacity.course3.reviews.service.CommentService;
 import com.udacity.course3.reviews.utils.ObjectMapperUtils;
 
@@ -28,7 +26,7 @@ public class CommentsController {
   /* member variables */
   // [DONE] Wire needed JPA repositories here
   @Autowired
-  private CommentService  commentService;
+  private CommentService    commentService;
   
   
   /* constructors */
@@ -54,13 +52,13 @@ public class CommentsController {
     value = "/reviews/{reviewId}", 
     method = RequestMethod.POST
   )
-  public ResponseEntity<Comment> createCommentForReview(
-      @PathVariable("reviewId") ObjectId reviewId,
-      @RequestBody CommentCreatingDTO commentDTO
+  public ResponseEntity<CommentDTO> createCommentForReview(
+      @PathVariable("reviewId") final Integer pReviewId,
+      @RequestBody CommentCreatingDTO pCommentDTO
   ) {
-    Comment comment = ObjectMapperUtils.map(commentDTO, Comment.class);
-    Comment commentDB = this.commentService.addComment(reviewId, comment);
-    return ResponseEntity.ok(commentDB);
+    
+    CommentDTO comment = this.commentService.addComment(pReviewId, pCommentDTO);
+    return ResponseEntity.ok(comment);
     
   }
 
@@ -78,15 +76,16 @@ public class CommentsController {
     method = RequestMethod.GET
   )
   public List<CommentDTO> listCommentsForReview(
-      @PathVariable("reviewId") ObjectId reviewId
+      @PathVariable("reviewId") Integer reviewId
   ) {
     
     // Review review = this.reviewService.findById(reviewId); 
     // return review.getComments();
     
     // :INFO: Exception-handling encapsulated in CommentService.
+    List<CommentDTO> commentList = this.commentService.findByReviewId(reviewId);
     return ObjectMapperUtils.mapAll(
-        this.commentService.findByReviewId(reviewId),
+        commentList,
         CommentDTO.class
     );
     
