@@ -2,16 +2,18 @@ package com.udacity.course3.reviews.service;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.udacity.course3.reviews.data.model.Comment;
+import com.udacity.course3.reviews.data.dto.CommentCreatingDTO;
+import com.udacity.course3.reviews.data.dto.CommentDTO;
+import com.udacity.course3.reviews.data.entity.Comment;
+import com.udacity.course3.reviews.data.model.MongoComment;
 import com.udacity.course3.reviews.ex.ReviewNotFoundException;
-import com.udacity.course3.reviews.repository.ReviewRepository;
+import com.udacity.course3.reviews.utils.ObjectMapperUtils;
 
 /**
- * Implementation of the comment service using jpa repositories.
+ * Implementation of the CommentService.
  * 
  * @author traal-devel
  */
@@ -21,46 +23,59 @@ public class CommentService {
   
   /* member variables */
   @Autowired
-  private ReviewRepository  reviewRepository;
-
+  private CommentJpaService     jpaService;
+  
+  @Autowired
+  private CommentMongoService   mongoService;
+  
   
   /* constructors */
   public CommentService() {
     super();
   }
   
-  public CommentService(
-      ReviewRepository reviewRepository
-  ) {
-    super();
-    
-    this.reviewRepository = reviewRepository;
-  }
-
   
   /* methods */
   /**
-   * Adds the given review to product specified with the parameter productId.
+   * Adds the given comment to a review specified with by the parameter reviewId.
    * <p>
-   * ProductNotFoundException thrown if product could not be found with given id.
+   * {@link ReviewNotFoundException} thrown if product could not be found 
+   * with given id.
    * </p>
-   * 
-   * @param productId Integer
-   * @param review - Review to store.
-   * @return Review - New review from the database.
+   * <p>
+   * Use transaction
+   * </p>
+   * @param reviewId Integer
+   * @param comment CommentCreatingDTO
+   * @return Comment - New instance of comment from the database.
    */
-  public Comment addComment(ObjectId reviewId, Comment comment) {
-    return this.reviewRepository
-               .findById(reviewId) 
-               .map(review -> {
-                 // :INFO: Set manually an ObjectId, so we can find a certain comment.
-                 comment.setId(new ObjectId());
-                 review.getComments().add(comment);
-                 
-                 this.reviewRepository.save(review);
-                 return comment; 
-               })
-               .orElseThrow(ReviewNotFoundException::new);
+//  :TODO: MongoDB 4.0 supports transactions. Test if this works with mysql together.
+//  Sources:
+//  - https://spring.io/blog/2018/06/28/hands-on-mongodb-4-0-transactions-with-spring-data
+//  - https://www.baeldung.com/spring-data-mongodb-transactions
+//  @Transactional
+  public CommentDTO addComment(
+      Integer reviewId, 
+      CommentCreatingDTO comment
+  ) {
+    
+    Comment commentDB = 
+        this.jpaService
+                .addComment(
+                    reviewId, 
+                    ObjectMapperUtils.map(comment, Comment.class));
+    
+    // :INFO: Try only to store the comment in the mongo db, if it could 
+    // be stored in the mysql database.
+    if (commentDB != null && commentDB.getId() != null) {
+      this.mongoService
+                .addComment(
+                    reviewId, 
+                    ObjectMapperUtils.map(comment, MongoComment.class));
+      
+    }
+    
+    return ObjectMapperUtils.map(commentDB, CommentDTO.class);
   }
   
   /**
@@ -69,11 +84,13 @@ public class CommentService {
    * @param reviewId Integer
    * @return List - the list with comments or ReviewNotFoundException 
    */
-  public List<Comment> findByReviewId(ObjectId reviewId) {
-    return this.reviewRepository
-               .findById(reviewId)
-               .map(review -> review.getComments())
-               .orElseThrow(ReviewNotFoundException::new);
+  public List<CommentDTO> findByReviewId(
+      Integer reviewId
+  ) {
+  
+    List<Comment> commentList = this.jpaService.findByReviewId(reviewId); 
+    return ObjectMapperUtils.mapAll(commentList, CommentDTO.class);
+    
   }
 
 }
