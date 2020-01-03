@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.udacity.course3.reviews.data.dto.ProductCreatingDTO;
 import com.udacity.course3.reviews.data.dto.ProductDTO;
-import com.udacity.course3.reviews.data.entity.Product;
 import com.udacity.course3.reviews.service.ProductService;
 import com.udacity.course3.reviews.service.ReviewService;
 import com.udacity.course3.reviews.utils.ObjectMapperUtils;
@@ -60,7 +59,7 @@ public class ProductsController {
       @Valid @RequestBody ProductCreatingDTO productDTO
   ) {
   
-    Product product = ObjectMapperUtils.map(productDTO, Product.class);
+    ProductDTO product = ObjectMapperUtils.map(productDTO, ProductDTO.class);
     this.prodctService.save(product);
 
   }
@@ -80,8 +79,7 @@ public class ProductsController {
   ) {
     
     // :INFO: Exception-Handling encapsulated in findById Methode (ProductService).
-    Product product = this.prodctService.findById(productId);
-    ProductDTO productDTO = ObjectMapperUtils.map(product, ProductDTO.class);
+    ProductDTO productDTO = this.prodctService.findById(productId);
     
     BigDecimal avgRating = this.reviewService.calcAvgRating(productId);
     productDTO.setAverageRating(avgRating);
