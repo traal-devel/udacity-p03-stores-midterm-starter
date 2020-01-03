@@ -6,8 +6,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.bson.types.ObjectId;
-
 /**
  * Review data transfer object implementation for return values.
  * 
@@ -18,7 +16,7 @@ public class ReviewDTO {
   
   /* member variables */
   @NotNull
-  private ObjectId  id;
+  private Integer   id;
   
   @NotNull
   private String    title;
@@ -44,11 +42,11 @@ public class ReviewDTO {
 
   
   /* methods */
-  public ObjectId getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(ObjectId id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 

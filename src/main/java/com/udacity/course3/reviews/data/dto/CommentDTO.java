@@ -16,7 +16,7 @@ public class CommentDTO {
   
   /* member variables */
   @NotNull
-  private ObjectId  id;
+  private Integer   id;
   
   @NotNull
   private String    name;
@@ -35,11 +35,11 @@ public class CommentDTO {
 
   
   /* methods */
-  public ObjectId getId() {
+  public Integer getId() {
     return id;
   }
 
-  public void setId(ObjectId id) {
+  public void setId(Integer id) {
     this.id = id;
   }
 
