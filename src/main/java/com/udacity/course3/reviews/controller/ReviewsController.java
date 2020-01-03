@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.udacity.course3.reviews.data.dto.ReviewCreatingDTO;
 import com.udacity.course3.reviews.data.dto.ReviewDTO;
-import com.udacity.course3.reviews.data.model.Review;
 import com.udacity.course3.reviews.service.ReviewService;
 import com.udacity.course3.reviews.utils.ObjectMapperUtils;
 
@@ -62,14 +61,14 @@ public class ReviewsController {
       value = "/products/{productId}", 
       method = RequestMethod.POST
   )
-  public ResponseEntity<Review> createReviewForProduct(
+  public ResponseEntity<ReviewDTO> createReviewForProduct(
       @PathVariable("productId") Integer productId,
-      @Valid @RequestBody ReviewCreatingDTO reviewDTO
+      @Valid @RequestBody ReviewCreatingDTO reviewCreatingDTO
   ) {
     
-    Review review = ObjectMapperUtils.map(reviewDTO, Review.class);
-    Review reviewDB = this.reviewService.addReview(productId, review);
-    return ResponseEntity.ok(reviewDB);
+    ReviewDTO reviewDTO = 
+                  this.reviewService.addReview(productId, reviewCreatingDTO);
+    return ResponseEntity.ok(reviewDTO);
     
   }
 
