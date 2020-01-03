@@ -10,9 +10,9 @@ import org.modelmapper.convention.MatchingStrategies;
 
 /**
  * ObjectMapperUtils by Andrew Nepogoda. 
- * 
+ * <p>
  * <b>Proof of concept.</b>
- * 
+ * </p>
  * <p>
  * Source:<br />
  * https://stackoverflow.com/questions/47929674/modelmapper-mapping-list-of-entites-to-list-of-dto-objects
@@ -67,7 +67,8 @@ public class ObjectMapperUtils {
       final Class<D> outClass
   ) {
     
-    return modelMapper.map(entity, outClass);
+    return entity == null ? 
+              null : modelMapper.map(entity, outClass);
     
   }
 
