@@ -1,4 +1,4 @@
-package com.udacity.course3.reviews;
+package com.udacity.course3.reviews.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -20,25 +20,28 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.udacity.course3.reviews.data.dto.ProductDTO;
+import com.udacity.course3.reviews.data.dto.ReviewDTO;
 import com.udacity.course3.reviews.data.entity.Product;
-import com.udacity.course3.reviews.data.model.Review;
+import com.udacity.course3.reviews.data.model.MongoReview;
 import com.udacity.course3.reviews.ex.ProductNotFoundException;
+import com.udacity.course3.reviews.ex.ReviewNotFoundException;
 import com.udacity.course3.reviews.repository.ProductRepository;
-import com.udacity.course3.reviews.repository.ReviewRepository;
-import com.udacity.course3.reviews.service.ReviewService;
+import com.udacity.course3.reviews.repository.ReviewMongoRepository;
+import com.udacity.course3.reviews.service.ReviewMongoService;
 import com.udacity.course3.reviews.util.DummyDataUtil;
+import com.udacity.course3.reviews.utils.ObjectMapperUtils;
 
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
-public class ReviewServiceDataMongoTest {
+public class ReviewServiceDataMongoTest extends AbstractDataMongoTest {
 
   
   /* constants */
@@ -46,17 +49,13 @@ public class ReviewServiceDataMongoTest {
                     LogManager.getLogger(ReviewServiceDataMongoTest.class);
   
   /* member variables */
-  @MockBean
-  private ProductRepository productRepository;
-  
   @Autowired
-  private ReviewRepository  reviewRepository;
-  
-  @Autowired
-  private ReviewService     reviewService;
+  private ReviewMongoRepository   reviewRepository;
+
+  private ReviewMongoService      reviewService;
   
   @Autowired 
-  private MongoTemplate     mongoTemplate;
+  private MongoTemplate           mongoTemplate;
   
   
   /* constructors */
@@ -68,13 +67,19 @@ public class ReviewServiceDataMongoTest {
   /* methods */
   @Before
   public void setup() {
-    Product product = DummyDataUtil.generateDummyProduct("_1", "Product description");
-    product.setId(1);
+    ProductDTO productDTO = DummyDataUtil.generateDummyProduct("_1", "Product description");
+    productDTO.setId(1);
+    Product product = ObjectMapperUtils.map(productDTO, Product.class);
     
-    given(productRepository.findById(any())).willReturn(Optional.of(product));
-    given(productRepository.save(any())).willReturn(product);
+    
+    given(productRepository.findById(any()))
+            .willReturn(Optional.of(product));
+    given(productRepository.save(any()))
+            .willReturn(product);
     
     this.reviewRepository.deleteAll();
+    this.reviewService = 
+              new ReviewMongoService(productRepository, reviewRepository);
   }
   
   @Test
@@ -83,7 +88,7 @@ public class ReviewServiceDataMongoTest {
     assertNotNull(this.reviewService);
   }
     
-  @Test(expected = ProductNotFoundException.class)
+  @Test(expected = ReviewNotFoundException.class)
   public void testFindByProductIdEqualsZero() {
     this.reviewService.findByProductId(1);
   }
@@ -91,7 +96,7 @@ public class ReviewServiceDataMongoTest {
   @Test
   public void testFindByProductIdEqualsOne() {
     this.testAddReview();
-    List<Review> reviewList = this.reviewService.findByProductId(1);
+    List<MongoReview> reviewList = this.reviewService.findByProductId(1);
     assertNotNull(reviewList);
     assertTrue("Size of list not correct. Should be 1 but is " + reviewList.size() ,
         reviewList.size() == 1);
@@ -101,8 +106,15 @@ public class ReviewServiceDataMongoTest {
   @Test
   public void testAddReview() {
     Integer productId = 1;
-    Review reviewDummy = DummyDataUtil.generateDummyReview(1).get(0);
-    Review reviewDB = this.reviewService.addReview(productId, reviewDummy);
+    Integer reviewId = 1;
+    ReviewDTO reviewDummy = DummyDataUtil.generateDummyReview(1).get(0);
+    MongoReview reviewDB = 
+          this.reviewService
+                  .addReview(
+                      productId, 
+                      reviewId, 
+                      ObjectMapperUtils.map(reviewDummy, MongoReview.class)
+                  );
     
     assertNotNull(reviewDB);
     assertNotNull(reviewDB.getId());
@@ -114,15 +126,20 @@ public class ReviewServiceDataMongoTest {
   
   @Test
   public void testAverageRating() {
-    Integer productId = 1;
+    int productId = 1;
+    int reviewId = 1;
     int iSize = 20;
     int sum = 0; 
     double average = 0;
-    List<Review> reviewList = DummyDataUtil.generateDummyReview(iSize);
+    List<ReviewDTO> reviewList = DummyDataUtil.generateDummyReview(iSize);
     
-    
-    for (Review review: reviewList) {
-      Review reviewDB = this.reviewService.addReview(productId, review);
+    for (ReviewDTO review: reviewList) {
+      MongoReview reviewDB = 
+              this.reviewService
+                    .addReview(
+                        productId, 
+                        ++reviewId,
+                        ObjectMapperUtils.map(review, MongoReview.class));
       assertNotNull(reviewDB);
       assertNotNull(reviewDB.getId());
       assertNotNull(reviewDB.getRating());
@@ -134,7 +151,7 @@ public class ReviewServiceDataMongoTest {
     logger.info("Average rating manually calculated: " + average);
 
     
-    TypedAggregation<Review> agg = newAggregation(Review.class,
+    TypedAggregation<MongoReview> agg = newAggregation(MongoReview.class,
         group("productId")            
           .avg("rating").as("avgRating")
     );
@@ -150,11 +167,11 @@ public class ReviewServiceDataMongoTest {
   static class MongodbConfig {
 
     @Bean
-    public ReviewService reviewService(
+    public ReviewMongoService reviewService(
         ProductRepository productRepository,
-        ReviewRepository reviewRepository
+        ReviewMongoRepository reviewRepository
     ) {
-        return new ReviewService(productRepository, reviewRepository);
+        return new ReviewMongoService(productRepository, reviewRepository);
     }
   }
 }

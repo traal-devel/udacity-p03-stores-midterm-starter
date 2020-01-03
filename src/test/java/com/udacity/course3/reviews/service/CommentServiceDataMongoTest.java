@@ -1,4 +1,4 @@
-package com.udacity.course3.reviews;
+package com.udacity.course3.reviews.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -7,40 +7,36 @@ import static org.junit.Assert.assertTrue;
 import java.sql.Timestamp;
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.udacity.course3.reviews.data.model.Comment;
-import com.udacity.course3.reviews.data.model.Review;
-import com.udacity.course3.reviews.repository.ProductRepository;
-import com.udacity.course3.reviews.repository.ReviewRepository;
-import com.udacity.course3.reviews.service.CommentService;
+import com.udacity.course3.reviews.data.dto.CommentDTO;
+import com.udacity.course3.reviews.data.model.MongoComment;
+import com.udacity.course3.reviews.data.model.MongoReview;
+import com.udacity.course3.reviews.repository.ReviewMongoRepository;
+import com.udacity.course3.reviews.service.CommentMongoService;
 import com.udacity.course3.reviews.util.DummyDataUtil;
+import com.udacity.course3.reviews.utils.ObjectMapperUtils;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
-public class CommentServiceDataMongoTest {
+public class CommentServiceDataMongoTest extends AbstractDataMongoTest {
 
   
   /* member variables */
-  @MockBean
-  private ProductRepository   productRepository;
-  
   @Autowired
-  private ReviewRepository    reviewRepository;
+  private ReviewMongoRepository    reviewRepository;
 
   @Autowired
-  private CommentService      commentService;
+  private CommentMongoService      commentService;
   
-  private Review              reviewDB;
+  private MongoReview              reviewDB;
 
   
   /* constructors */
@@ -54,7 +50,8 @@ public class CommentServiceDataMongoTest {
   public void before() {
     this.reviewRepository.deleteAll();
     
-    Review review = new Review();
+    MongoReview review = new MongoReview();
+    review.setId(1);
     review.setAuthor("Test Author (1)");
     review.setBody("Test Body (1)");
     review.setCreatedTime(new Timestamp(System.currentTimeMillis()));
@@ -66,9 +63,9 @@ public class CommentServiceDataMongoTest {
   
   @Test
   public void testReadComment() {
-    ObjectId id = this.reviewDB.getId();
+    Integer id = this.reviewDB.getId();
     this.testAddComment();
-    List<Comment> commentList = this.commentService.findByReviewId(id);
+    List<MongoComment> commentList = this.commentService.findByReviewId(id);
     
     assertNotNull(commentList);
     assertTrue(commentList.size() == 1);
@@ -76,9 +73,13 @@ public class CommentServiceDataMongoTest {
   
   @Test
   public void testAddComment() {
-    ObjectId reviewId = this.reviewDB.getId();
-    Comment comment = DummyDataUtil.generateDummyComment("_2");
-    Comment commentDB = this.commentService.addComment(reviewId, comment);
+    Integer reviewId = this.reviewDB.getId();
+    CommentDTO comment = DummyDataUtil.generateDummyComment("_2");
+    MongoComment commentDB = 
+          this.commentService
+                  .addComment(
+                      reviewId, 
+                      ObjectMapperUtils.map(comment, MongoComment.class));
     
     assertNotNull(commentDB);
     assertEquals(comment.getContent(), commentDB.getContent());
@@ -90,10 +91,10 @@ public class CommentServiceDataMongoTest {
   static class MongodbConfig {
 
     @Bean
-    public CommentService commentService (
-        ReviewRepository reviewRepository
+    public CommentMongoService commentService (
+        ReviewMongoRepository reviewRepository
     ) {
-        return new CommentService(reviewRepository);
+        return new CommentMongoService(reviewRepository);
     }
   }
  

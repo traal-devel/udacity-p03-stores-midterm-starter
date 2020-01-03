@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.udacity.course3.reviews.data.dto.ProductDTO;
 import com.udacity.course3.reviews.data.entity.Product;
 import com.udacity.course3.reviews.ex.ProductNotFoundException;
 import com.udacity.course3.reviews.repository.ProductRepository;
+import com.udacity.course3.reviews.utils.ObjectMapperUtils;
 
 /**
  * Implementation of the product service using the jpa repository.
@@ -40,11 +42,16 @@ public class ProductService {
    * @param id Long
    * @return Product - Found product or else ProductNotFoundException 
    */
-  public Product findById(Integer id) {
-    return 
-        this.productRepository
+  public ProductDTO findById(
+      Integer id
+  ) {
+    
+     Product product =
+         this.productRepository
             .findById(id)
             .orElseThrow(ProductNotFoundException::new);
+     return ObjectMapperUtils.map(product, ProductDTO.class);
+     
   }
   
   /**
@@ -53,7 +60,10 @@ public class ProductService {
    * @param product Product
    * @return Product - Product from the databae or else ProductNotFoundException
    */
-  public Product save(Product product) {
+  public ProductDTO save(
+      ProductDTO productDTO
+  ) {
+    Product product = ObjectMapperUtils.map(productDTO, Product.class);
     Product productDB = null;
     
     if (product.getId() != null) {
@@ -70,15 +80,19 @@ public class ProductService {
       productDB = productRepository.save(product);
     }
 
-    return productDB;
+    return ObjectMapperUtils.map(productDB, ProductDTO.class);
+    
   }
 
   /**
    * Returns the 
    * @return
    */
-  public List<Product> list() {
-    return this.productRepository.findAll();
+  public List<ProductDTO> list() {
+    
+    List<Product> productList = this.productRepository.findAll();
+    return ObjectMapperUtils.mapAll(productList, ProductDTO.class);
+
   }
   
   public long count() {

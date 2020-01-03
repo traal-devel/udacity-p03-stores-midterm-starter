@@ -1,4 +1,4 @@
-package com.udacity.course3.reviews;
+package com.udacity.course3.reviews.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.udacity.course3.reviews.data.entity.Product;
+import com.udacity.course3.reviews.data.dto.ProductDTO;
 import com.udacity.course3.reviews.util.DummyDataUtil;
 
 /**
@@ -47,8 +47,8 @@ public class ProductServiceDataJpaTest extends AbstractDataJpaTest {
     // so FetchType.LAZY (-> method getReview) can work. 
     // [START] - Transaction
     this.transactionTemplate.execute((status) -> {
-      Product product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
-      Product productDB = this.productService.save(product);
+      ProductDTO product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
+      ProductDTO productDB = this.productService.save(product);
       
       assertNotNull(productDB);
       assertNotNull(productDB.getId());
@@ -62,8 +62,8 @@ public class ProductServiceDataJpaTest extends AbstractDataJpaTest {
   
   @Test
   public void testProductSave() {
-    Product product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
-    Product productDB = this.productService.save(product);
+    ProductDTO product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
+    ProductDTO productDB = this.productService.save(product);
     
     assertNotNull(productDB);
     assertNotNull(productDB.getId());
@@ -75,17 +75,17 @@ public class ProductServiceDataJpaTest extends AbstractDataJpaTest {
   
   @Test
   public void testProductListEmpty() {
-    List<Product> productList = this.productService.list();
+    List<ProductDTO> productList = this.productService.list();
     assertNotNull(productList);
     assertTrue(productList.size() == 0);
   }
   
   @Test
   public void testProductSizeEqualsOne() {
-    Product product = DummyDataUtil.generateDummyProduct("_1", "Test Description");
+    ProductDTO product = DummyDataUtil.generateDummyProduct("_1", "Test Description");
     this.productService.save(product);
     
-    List<Product> productList = this.productService.list();
+    List<ProductDTO> productList = this.productService.list();
     assertNotNull(product);
     assertTrue(productList.size() == 1);
   }
@@ -94,12 +94,12 @@ public class ProductServiceDataJpaTest extends AbstractDataJpaTest {
   public void testProductSizeEqualsFive() {
     int n = 5;
     long tmpCurrentSize = this.productService.count();
-    List<Product> productList = DummyDataUtil.generateDummyProductList(n);
-    for (Product product : productList) {
+    List<ProductDTO> productList = DummyDataUtil.generateDummyProductList(n);
+    for (ProductDTO product : productList) {
       this.productService.save(product);
     }
     
-    List<Product> productDbList = this.productService.list();
+    List<ProductDTO> productDbList = this.productService.list();
     assertNotNull(productDbList);
     assertTrue(productDbList.size() == n + tmpCurrentSize);
   }
@@ -107,10 +107,10 @@ public class ProductServiceDataJpaTest extends AbstractDataJpaTest {
   @Test
   public void testProductFindById() {
     
-    Product product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
-    Product productDB = this.productService.save(product);
+    ProductDTO product = DummyDataUtil.generateDummyProduct("-1", "Test Description");
+    ProductDTO productDB = this.productService.save(product);
     
-    Product productFindById = this.productService.findById(productDB.getId());
+    ProductDTO productFindById = this.productService.findById(productDB.getId());
     
     assertNotNull(productFindById);
     assertEquals(productFindById.getId(), productDB.getId());
